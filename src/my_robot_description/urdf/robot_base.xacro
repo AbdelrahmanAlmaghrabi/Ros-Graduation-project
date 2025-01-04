@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro ="http://www.ros.org/wiki/xacro">
+
+
+     
+     <!-- Robot Properties -->
+
+    <xacro:property name="base_length" value="5"/>  lenght of base divided by 10
+    <xacro:property name="base_width" value="3.5"/> width of base divided by 10
+    <xacro:property name="base_height" value="1"/>  height of base  divided by 10
+    <xacro:property name="radius_wheels" value="0.8"/>
+    <xacro:property name="thick_wheels" value="0.3"/>
+    <xacro:property name="wheel_joint_hieght" value="0.3"/>
+
+
+
+    <!-- Base Footprint -->
+    <link name="base_footprint"/>
+
+      <!-- Base Link -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${base_length} ${base_width} ${base_height}"></box>
+            </geometry>
+            <material name="orange"/>
+            <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0" />
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${base_length} ${base_width} ${base_height}"></box>
+            </geometry>
+            <material name="orange"/>
+            <origin xyz="0 0 ${base_height/2.0}" rpy="0 0 0" />        
+        </collision>
+        <xacro:box_inertia m="5.0" l="${base_length}" w="${base_width}" h="${base_height}"
+                            xyz="0 0 ${base_height/2.0}" rpy="0 0 0"/>
+    </link> 
+
+    
+
+    <!-- Wheel Macro -->
+    <xacro:macro name="wheel_link" params="prefix">
+        <link name="${prefix}_wheel_link">
+            <visual>
+                <geometry>
+                    <cylinder radius="${radius_wheels}" length="${thick_wheels}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0"/>  rotat wheel 180 degree about X axis
+                <material name="gray"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="${radius_wheels}" length="${thick_wheels}" />
+                </geometry>
+                <origin xyz="0 0 0" rpy="${pi/2.0} 0 0"/>  rotat wheel 180 degree about X axis
+            </collision>
+            <xacro:wheel_inertia m="0.5" r="${radius_wheels}" h="${thick_wheels}"
+                                 xyz="0 0 0" rpy="${pi/2.0} 0 0"/>
+        </link>
+    </xacro:macro>
+
+
+    <!-- Wheel Links -->
+    <xacro:wheel_link prefix="right_r"/>
+    <xacro:wheel_link prefix="right_f"/>
+    <xacro:wheel_link prefix="left_r"/>
+    <xacro:wheel_link prefix="left_f"/>
+
+
+    <!-- Fixed Joint for Base -->
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>  0.5 diffrent  between 
+    </joint>
+
+
+
+    <!-- Continuous Joints for Wheels -->
+
+    <!-- Rear Right Wheel -->
+    <joint name="base_right_wheel_r_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link ="right_r_wheel_link"/>
+        <origin xyz="-1.8 -1.9 ${wheel_joint_hieght}" rpy="0 0 0"/> ///distance between center and wheel 
+        <axis xyz="0 1 0"/>
+    </joint>
+
+<!-- Front Right Wheel -->
+    <joint name="base_right_wheel_f_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_f_wheel_link"/>
+        <origin xyz="1.8 -1.9 ${wheel_joint_hieght}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+<!-- Rear Left Wheel -->
+    <joint name="base_left_wheel_r_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_r_wheel_link"/>
+        <origin xyz="-1.8 1.9 ${wheel_joint_hieght}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+<!-- Front Left Wheel -->
+    <joint name="base_left_wheel_f_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_f_wheel_link"/>
+        <origin xyz="1.8 1.9 ${wheel_joint_hieght}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+    </joint>
+
+</robot>
